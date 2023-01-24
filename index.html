@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password send</title>
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      form {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      input {
+        margin: 0.5rem;
+        width: 200px;
+      }
+      button {
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="form">
+      <input class="password" type="text" placeholder="enter otp here" />
+      <input class="email" type="email" placeholder="enter your email" />
+      <h4 class="timer">1:00</h4>
+      <button type="submit">Send Password</button>
+      <button type="button" class="login">Login</button>
+    </form>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script>
+      const $ = document;
+      const form = $.querySelector(".form"),
+        password = $.querySelector(".password"),
+        email = $.querySelector(".email"),
+        timer = $.querySelector(".timer"),
+        login = $.querySelector(".login");
+
+      let flag = false;
+      function passGenerator() {
+        let pass = 0;
+        for (let i = 0; i < 5; i++) {
+          pass = pass + Math.floor(Math.random() * 9) * Math.pow(10, i);
+        }
+        return pass;
+      }
+
+      let time = 60;
+      function timeDown() {
+        time--;
+        console.log(time);
+        timer.innerHTML = `0:${time}`;
+        if (time == 0) {
+          clearInterval(intel);
+          alert("time is over.");
+          flag = false;
+        }
+      }
+
+      function sendPassword(e) {
+        e.preventDefault();
+        let pass = passGenerator();
+        let intel = setInterval(timeDown, 1000);
+        flag = true;
+
+        login.addEventListener("click", () => {
+          if (flag) {
+            if (password === pass) {
+              alert("password is correct.");
+            } else {
+              alert("password is not correct.");
+            }
+          } else {
+            alert("time is over");
+          }
+        });
+
+        Email.send({
+          SecureToken: "*******************************",
+          To: email.value,
+          From: "ehsan.shahb********@gmail.com",
+          Subject: "One time password",
+          Body: pass,
+        }).then((message) => alert(message));
+      }
+
+      form.addEventListener("submit", sendPassword);
+    </script>
+  </body>
+</html>
